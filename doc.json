@@ -1,0 +1,678 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Visitas y Autenticación API",
+    "version": "1.0.0",
+    "description": "API para la gestión de visitas de clientes y la autenticación de usuarios. Utiliza un token Bearer para la autenticación en las rutas protegidas."
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Operaciones de autenticación de usuario (registro, login, logout)"
+    },
+    {
+      "name": "Visits",
+      "description": "Gestión de visitas de clientes (CRUD e importación)"
+    }
+  ],
+  "paths": {
+    "/api/visits": {
+      "get": {
+        "summary": "Obtener todas las visitas",
+        "tags": [
+          "Visits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de visitas recuperadas exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Visit"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear una nueva visita",
+        "tags": [
+          "Visits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "name",
+                  "email",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Cliente A"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "cliente.a@example.com"
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 40.7128
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "format": "float",
+                    "example": -74.006
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Visita creada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visit"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/visits/{id}": {
+      "get": {
+        "summary": "Obtener una visita por ID",
+        "tags": [
+          "Visits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la visita a recuperar",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la visita recuperados exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visit"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Visita no encontrada."
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualizar una visita existente",
+        "tags": [
+          "Visits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la visita a actualizar",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "name",
+                  "email",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Cliente B Actualizado"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "cliente.b.updated@example.com"
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 41.9028
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 12.4964
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visita actualizada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visit"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Visita no encontrada."
+          },
+          "422": {
+            "description": "Error de validación.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar una visita",
+        "tags": [
+          "Visits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la visita a eliminar",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Visita eliminada exitosamente."
+          },
+          "404": {
+            "description": "Visita no encontrada."
+          }
+        }
+      }
+    },
+    "/api/visits/import": {
+      "post": {
+        "summary": "Importar visitas desde un archivo Excel/CSV",
+        "tags": [
+          "Visits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Archivo Excel (.xlsx, .xls) o CSV de visitas."
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visitas importadas correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Visitas importadas correctamente"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Visit"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación del archivo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "summary": "Registrar un nuevo usuario",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Datos de registro del usuario",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User registered successfully"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The given data was invalid."
+                    },
+                    "errors": {
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "summary": "Iniciar sesión de usuario",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Credenciales de usuario",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Credenciales incorrectas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The provided credentials are incorrect."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "summary": "Cerrar sesión de usuario",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sesión cerrada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthenticated."
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "title": "User",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID del usuario"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre del usuario"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Correo electrónico del usuario"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de creación del usuario"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de última actualización del usuario"
+          }
+        },
+        "type": "object"
+      },
+      "RegisterRequest": {
+        "title": "Register Request",
+        "required": [
+          "name",
+          "email",
+          "password",
+          "password_confirmation"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "Nombre del usuario"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com",
+            "description": "Correo electrónico único del usuario"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123",
+            "description": "Contraseña del usuario (mínimo 8 caracteres)"
+          },
+          "password_confirmation": {
+            "type": "string",
+            "format": "password",
+            "example": "password123",
+            "description": "Confirmación de la contraseña"
+          }
+        },
+        "type": "object"
+      },
+      "LoginRequest": {
+        "title": "Login Request",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com",
+            "description": "Correo electrónico del usuario"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123",
+            "description": "Contraseña del usuario"
+          }
+        },
+        "type": "object"
+      },
+      "LoginResponse": {
+        "title": "Login Response",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Login successful",
+            "description": "Mensaje de éxito del login"
+          },
+          "access_token": {
+            "type": "string",
+            "example": "eyJ0eXAiOiJKV1QiLCJhbGci...",
+            "description": "Token de acceso JWT"
+          },
+          "token_type": {
+            "type": "string",
+            "example": "Bearer",
+            "description": "Tipo de token"
+          }
+        },
+        "type": "object"
+      },
+      "LogoutResponse": {
+        "title": "Logout Response",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Logged out successfully",
+            "description": "Mensaje de éxito del logout"
+          }
+        },
+        "type": "object"
+      },
+      "Visit": {
+        "title": "Visit",
+        "required": [
+          "name",
+          "email",
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID de la visita"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre de la visita/cliente"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Correo electrónico del cliente"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Latitud de la visita"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Longitud de la visita"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de creación de la visita"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de última actualización de la visita"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Introduce tu token JWT aquí (ej: Bearer your_token)"
+      }
+    }
+  }
+}
